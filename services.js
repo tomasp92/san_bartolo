@@ -25,8 +25,10 @@ const sendEmails = async ({ file, additionalMessage }) => {
         for (let i = 1; i < data.length; i++) {
           const row = data[i]
           const email =  row[0]
-          if (!email) {
+          if (!email || email === "X") {
             continue
+          } else if (email = "END") {
+            return {sentCount, emails, error: false }
           }
           
           const rows = getRowDetails({ data, totalesIndex, currentIndex: i })
