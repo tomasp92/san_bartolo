@@ -1,8 +1,19 @@
-const multer = require('multer')
-const { sendEmails } = require('../services')
-require('dotenv').config()
+const express = require('express');
+const multer = require('multer');
+const cors = require('cors');
+const { sendEmails } = require('../services');
+require('dotenv').config();
 
-const upload = multer({ dest: '/tmp/uploads/' })
+const app = express();
+const upload = multer({ dest: '/tmp/uploads/' });
+
+// Configurar CORS
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://san-bartolo-rendiciones.vercel.app'], // Agrega aquí los dominios permitidos
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 
 module.exports = (req, res) => {
   upload.single('excelFile')(req, res, async (err) => {
