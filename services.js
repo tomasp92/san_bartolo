@@ -27,7 +27,7 @@ const sendEmails = async ({ file, additionalMessage }) => {
           const email =  row[0]
           if (!email || email === "X") {
             continue
-          } else if (email = "END") {
+          } else if (email === "END") {
             return {sentCount, emails, error: false }
           }
           
