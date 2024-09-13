@@ -18,7 +18,6 @@ const sendEmails = async ({ file, additionalMessage }) => {
         
         if (totalesIndex === -1) {
           return {sentCount, emails, error: {number: 400, json: { error: 'No se encontró la columna "Total"'}}}
-
         }
         let headersHTML = getHtmlHeaders(totalesIndex, headers)
         
@@ -30,11 +29,11 @@ const sendEmails = async ({ file, additionalMessage }) => {
           } else if (email === "END") {
             return {sentCount, emails, error: false }
           }
-          
+          const totalDebt = Math.round(data[currentIndex][totalesIndex])
           const rows = getRowDetails({ data, totalesIndex, currentIndex: i })
           const detail = `${headersHTML}${rows}</table>`
     
-          const sent = await sendMail({ email, additionalMessage, detail, file: file })
+          const sent = await sendMail({ email, additionalMessage, detail, file: file, totalDebt })
           if (sent){
             sentCount++
             emails += `${email},`

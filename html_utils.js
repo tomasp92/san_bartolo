@@ -33,6 +33,7 @@ const getHtmlHeaders = (totalesIndex, headers) => {
 
 const getRowDetails = ({ data, totalesIndex, currentIndex}) => {
   let rows = ""
+  
   for (let j = currentIndex; j >= 0; j--) {
     const currentRow = data[j]
     let currentRowHTML = "<tr>"
@@ -53,6 +54,7 @@ const getRowDetails = ({ data, totalesIndex, currentIndex}) => {
     }
     rows = `${currentRowHTML}</tr>` + rows
     if (data[j-1][0]) {
+      console.log('🚀 ~ data[j-1][0]:', data[j-1][0])
       break // Nos detenemos cuando encontramos un correo anterior
     }
   }
