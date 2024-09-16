@@ -29,7 +29,7 @@ const sendEmails = async ({ file, additionalMessage }) => {
           } else if (email === "END") {
             return {sentCount, emails, error: false }
           }
-          const totalDebt = Math.round(data[currentIndex][totalesIndex])
+          const totalDebt = Math.round(data[i][totalesIndex])
           const rows = getRowDetails({ data, totalesIndex, currentIndex: i })
           const detail = `${headersHTML}${rows}</table>`
     
