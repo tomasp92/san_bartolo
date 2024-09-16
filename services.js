@@ -27,6 +27,7 @@ const sendEmails = async ({ file, additionalMessage }) => {
           if (!email || email === "X") {
             continue
           } else if (email === "END") {
+            console.log('🚀 ~ email:', email)
             return {sentCount, emails, error: false }
           }
           const totalDebt = Math.round(data[i][totalesIndex])

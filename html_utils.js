@@ -54,7 +54,6 @@ const getRowDetails = ({ data, totalesIndex, currentIndex}) => {
     }
     rows = `${currentRowHTML}</tr>` + rows
     if (data[j-1][0]) {
-      console.log('🚀 ~ data[j-1][0]:', data[j-1][0])
       break // Nos detenemos cuando encontramos un correo anterior
     }
   }

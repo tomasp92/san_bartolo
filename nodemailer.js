@@ -21,9 +21,8 @@ const monthName = getMonthName(month)
 
 const sendMail = async ({email, additionalMessage, detail, file, totalDebt}) => {
   const debtTitle = totalDebt > 0 ? `Debes $${totalDebt}` : `Tenés a favor $${totalDebt}`
-  console.log('🚀 ~ email:', email, '\n', debtTitle)
    try {
-      await transporter.sendMail({
+      transporter.sendMail({
         from: gmail_user,
         to: email,
         subject: `${debtTitle}. Rendición San Bartolo ${monthName} ${year}`,
