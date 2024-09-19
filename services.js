@@ -1,7 +1,7 @@
 const xlsx = require('xlsx')
 const fs = require('fs');
-const { getHtmlHeaders, getRowDetails } = require('./html_utils')
-const { sendMail } = require('./nodemailer')
+const { getHtmlHeaders, getRowDetails } = require('./utils/html_utils')
+const { sendMail } = require('./adapters/nodemailer')
 
 const sendEmails = async ({ file, additionalMessage }) => {
     let emails = ''
@@ -27,18 +27,17 @@ const sendEmails = async ({ file, additionalMessage }) => {
           if (!email || email === "X") {
             continue
           } else if (email === "END") {
-            console.log('🚀 ~ email:', email)
             return {sentCount, emails, error: false }
           }
           const totalDebt = Math.round(data[i][totalesIndex])
           const rows = getRowDetails({ data, totalesIndex, currentIndex: i })
           const detail = `${headersHTML}${rows}</table>`
-    
+
           const sent = await sendMail({ email, additionalMessage, detail, file: file, totalDebt })
           if (sent){
             sentCount++
             emails += `${email},`
-          } 
+          }
         }
     
         return {sentCount, emails, error: false }
