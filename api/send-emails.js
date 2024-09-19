@@ -1,35 +1,35 @@
-const multer = require('multer')
-require('dotenv').config()
-const redisClient = require('../adapters/redis')
-const allowCors = require('../adapters/cors')
-
-const upload = multer({ dest: '/tmp/uploads/' })
-
+const fs = require('fs')
+const util = require('util')
+const readFile = util.promisify(fs.readFile)
 
 module.exports = allowCors((req, res) => {
   upload.single('excelFile')(req, res, async (err) => {
     if (err) {
       return res.status(500).json({ message: 'Error al subir el archivo' })
     }
-    
+
     const additionalMessage = req.body.additionalMessage || ''
     const pass = req.body.pass || ''
-    
+
     if (pass !== process.env.PASSWORD) {
       return res.status(401).json({
-        message: 'Contraseña incorrecta'
+        message: 'Contraseña incorrecta',
       })
     }
+
     try {
+      const fileContent = await readFile(req.file.path, { encoding: 'base64' })
+
       const job = {
-        file: req.file.path,
-        additionalMessage
+        file: fileContent,
+        fileName: req.file.originalname,
+        additionalMessage,
       }
-    
+
       await redisClient.rpush('emailQueue', JSON.stringify(job))
 
       return res.status(200).json({
-        message: `El trabajo de enviar correos ha comenzado. Recibirás un resumen de lo envíado al mail sanbartolo.pagos@gmail.com una vez finalizado el trabajo`
+        message: `El trabajo de enviar correos ha comenzado. Recibirás un resumen de lo enviado al mail sanbartolo.pagos@gmail.com una vez finalizado el trabajo`,
       })
     } catch (error) {
       console.error(error)
