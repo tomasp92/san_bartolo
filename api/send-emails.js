@@ -28,7 +28,7 @@ module.exports = allowCors((req, res) => {
       });
 
       return res.status(200).json({
-        message: `El trabajo de enviar correos ha sido encolado y será procesado en segundo plano.`
+        message: `El trabajo de enviar correos ha comenzado. Recibirás un resumen de lo envíado al mail sanbartolo.pagos@gmail.com una vez finalizado el trabajo`
       });
     } catch (error) {
       console.error(error);
