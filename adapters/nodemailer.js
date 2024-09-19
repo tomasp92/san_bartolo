@@ -37,7 +37,7 @@ const transporterSendMail = ({ email, subject, html, attachments }) => {
 }
 
 const sendMail = ({ email, additionalMessage, detail, file, totalDebt }) => {
-  const debtTitle = totalDebt > 0 ? `Debes $${totalDebt}` : `Tenés a favor $${totalDebt}`
+  const debtTitle = totalDebt > 0 ? `Debes $${totalDebt}` : `Tenés a favor $${totalDebt*-1}`
   return transporterSendMail({
     email,
     subject: `${debtTitle}. Rendición San Bartolo ${monthName} ${year}`,
