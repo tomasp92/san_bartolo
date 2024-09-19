@@ -19,12 +19,27 @@ const transporter = nodemailer.createTransport({
 const {month, year} = getMonthAndYear()
 const monthName = getMonthName(month)
 
-const sendMail = ({ email, additionalMessage, detail, file, totalDebt }) => {
-  const debtTitle = totalDebt > 0 ? `Debes $${totalDebt}` : `Tenés a favor $${totalDebt}`;
-
+const transporterSendMail = ({ email, subject, html, attachments }) => {
   return transporter.sendMail({
     from: gmail_user,
     to: email,
+    subject: subject,
+    html: html,
+    attachments: attachments
+  })
+  .then(() => {
+    return 1
+  })
+  .catch(error => {
+    console.error(`Error sending email to ${email}:`, error);
+    return 0;
+  })
+}
+
+const sendMail = ({ email, additionalMessage, detail, file, totalDebt }) => {
+  const debtTitle = totalDebt > 0 ? `Debes $${totalDebt}` : `Tenés a favor $${totalDebt}`
+  return transporterSendMail({
+    email,
     subject: `${debtTitle}. Rendición San Bartolo ${monthName} ${year}`,
     html: `<p>${additionalMessage}</p>
            <p>A continuación se detalla la deuda:</p>
@@ -36,15 +51,21 @@ const sendMail = ({ email, additionalMessage, detail, file, totalDebt }) => {
       }
     ]
   })
-  .then(() => {
-    return 1;
+}
+
+const sentEmailsReport = async ({ sentCount, emails, errors }) => {
+  await transporterSendMail({
+    email: 'tomaspalau35@hotmail.com', //sanbartolo.pagos@gmail.com
+    subject: `La rendición de san bartolo fue envíada a  ${sentCount} emails`,
+    html: `<h1>La rendición de san bartolo fue envíada</h1>
+           <p>Fue recibida por los siguientes emails: ${emails}</p>
+           <br><br><br><br><br><br><br>
+           <p>Errores al enviar para los siguientes emails: ${errors}</p>`,
   })
-  .catch(error => {
-    console.error(`Error sending email to ${email}:`, error);
-    return 0;
-  });
-};
+  return {sentCount, emails, error: false }
+}
 
 module.exports = {
-  sendMail
+  sendMail,
+  sentEmailsReport
 }

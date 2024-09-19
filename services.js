@@ -6,6 +6,8 @@ const { sendMail } = require('./adapters/nodemailer')
 const sendEmails = async ({ file, additionalMessage }) => {
     let emails = ''
     let sentCount = 0
+    let nonSentCount = 0
+    let errors = ''
     try {
         const workbook = xlsx.readFile(file)
         const sheetName = workbook.SheetNames[0]
@@ -27,7 +29,7 @@ const sendEmails = async ({ file, additionalMessage }) => {
           if (!email || email === "X") {
             continue
           } else if (email === "END") {
-            return {sentCount, emails, error: false }
+            return sentEmailsReport({sentCount, emails })
           }
           const totalDebt = Math.round(data[i][totalesIndex])
           const rows = getRowDetails({ data, totalesIndex, currentIndex: i })
@@ -37,10 +39,13 @@ const sendEmails = async ({ file, additionalMessage }) => {
           if (sent){
             sentCount++
             emails += `${email},`
+          } else {
+            nonSentCount ++
+            errors += `${email},`
           }
         }
-    
-        return {sentCount, emails, error: false }
+        
+        return sentEmailsReport({sentCount, emails, errors })
       } catch (error) {
         console.error(error)
         return {sentCount, emails, error: {number: 400, json: { message: `Error al enviar correos: ${error}`}}}
