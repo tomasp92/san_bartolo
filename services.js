@@ -29,7 +29,7 @@ const sendEmails = async ({ file, additionalMessage }) => {
           if (!email || email === "X") {
             continue
           } else if (email === "END") {
-            return sentEmailsReport({sentCount, emails })
+            return sentEmailsReport({sentCount, emails, errors })
           }
           const totalDebt = Math.round(data[i][totalesIndex])
           const rows = getRowDetails({ data, totalesIndex, currentIndex: i })
