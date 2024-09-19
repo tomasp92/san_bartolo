@@ -1,7 +1,7 @@
 const multer = require('multer')
-const allowCors = require('../adapters/cors')
-const emailQueue = require('../queues/email.queues')
 require('dotenv').config()
+const redisClient = require('../adapters/redis')
+const allowCors = require('../adapters/cors')
 
 const upload = multer({ dest: '/tmp/uploads/' })
 
@@ -21,18 +21,19 @@ module.exports = allowCors((req, res) => {
       })
     }
     try {
-      // Encolamos el trabajo en Redis
-      await emailQueue.add({
+      const job = {
         file: req.file.path,
         additionalMessage
-      });
+      }
+    
+      await redisClient.rpush('emailQueue', JSON.stringify(job))
 
       return res.status(200).json({
         message: `El trabajo de enviar correos ha comenzado. Recibirás un resumen de lo envíado al mail sanbartolo.pagos@gmail.com una vez finalizado el trabajo`
-      });
+      })
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error al encolar el trabajo' });
+      console.error(error)
+      return res.status(500).json({ message: 'Error al encolar el trabajo' })
     }
   })
 })
