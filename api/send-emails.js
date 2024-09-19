@@ -1,6 +1,13 @@
+const multer = require('multer')
+require('dotenv').config()
 const fs = require('fs')
 const util = require('util')
 const readFile = util.promisify(fs.readFile)
+const allowCors = require('../adapters/cors')
+const redisClient = require('../adapters/redis')
+
+const upload = multer({ dest: '/tmp/uploads/' })
+
 
 module.exports = allowCors((req, res) => {
   upload.single('excelFile')(req, res, async (err) => {
@@ -18,13 +25,18 @@ module.exports = allowCors((req, res) => {
     }
 
     try {
-      const fileContent = await readFile(req.file.path, { encoding: 'base64' })
+      const fileContent = await readFile(req.file.path)
+      const fileKey = `file_key_${Date.now()}`
 
       const job = {
+        'fileKey': fileKey,
         file: fileContent,
         fileName: req.file.originalname,
         additionalMessage,
       }
+
+      await redisClient.set(fileKey, fileContent)
+      console.log('File stored successfully in Redis')
 
       await redisClient.rpush('emailQueue', JSON.stringify(job))
 
