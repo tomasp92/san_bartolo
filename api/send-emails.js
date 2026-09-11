@@ -30,7 +30,6 @@ module.exports = allowCors((req, res) => {
 
       const job = {
         'fileKey': fileKey,
-        file: fileContent,
         fileName: req.file.originalname,
         additionalMessage,
       }
